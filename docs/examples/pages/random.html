@@ -1,0 +1,248 @@
+<link rel='stylesheet' href='./style.css'><script src='./Okb.js'></script><script>Okb.explode(1);</script><script>run=function (id){
+  var code = document.getElementById("code-"+id).innerText;
+  var header = "var canvas = document.getElementById('canv-"+id+"');\n"
+             + "var context = canvas.getContext('2d');\n"
+             + "context.fillStyle='white'; context.fillRect(0,0,canvas.width,canvas.height)\n"
+  // console.log(header+code)
+  try{
+    eval(header+code)
+  }catch(e){
+    try{
+      eval(header)
+      var es = e.toString();
+      var et = es.split(" ");
+      var wpl = 2;
+      var ln = 0;
+      for (var i = 0; i < et.length; i+=wpl){
+        ln ++;
+        eval("context.fillStyle='black';context.fillText(`"+et.slice(i,i+wpl).join(" ")+"`,0,"+(ln*10)+");")
+      }
+    }catch(f){
+      alert(e);
+    }
+  }
+}</script>
+<script>highlight=function (all){
+  function getCaretPosition(element, mode) {
+    var caretOffset = 0;
+    var doc = element.ownerDocument || element.document;
+    var win = doc.defaultView || doc.parentWindow;
+    var sel;
+
+    sel = win.getSelection();
+    if (sel.rangeCount > 0) {
+      var range = win.getSelection().getRangeAt(0);
+      var preCaretRange = range.cloneRange();
+      preCaretRange.selectNodeContents(element);
+      if (mode == "start"){
+        preCaretRange.setEnd(range.endContainer, range.endOffset);
+      }else{
+        preCaretRange.setEnd(range.startContainer, range.startOffset);
+      }
+      caretOffset = preCaretRange.toString().length;
+    }
+    return caretOffset;
+  }
+
+  function setCaretPosition(element,i,j,ie,je){
+    var range = document.createRange();
+    var sel = window.getSelection();
+    range.setStart(element.childNodes[i], j);
+    range.setEnd(element.childNodes[ie], je);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+  var codes = document.getElementsByClassName("example-code");
+
+  var keywords = ["break","case","catch","continue","debugger","default","delete","do","else","finally","for","function",
+                  "if","in","instanceof","new","return","switch","this","throw","try","typeof","var","void","while","with"]
+  keywords = keywords.concat(["canvas","context"])
+  var alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890$_"
+
+  for (var i = 0; i < codes.length; i++){
+    if ((!all) && document.activeElement != codes[i]){
+      continue;
+    }
+    var c = getCaretPosition(codes[i],"start")+NNL;
+    var ce = getCaretPosition(codes[i],"end")+NNL;
+    NNL = 0;
+    var cc = codes[i].innerText;
+    var nc = ""
+    for (var j = 0; j < cc.length; j++){
+      var matched = false
+      for (var k = 0; k < keywords.length; k++){
+        matched = true;
+        var buf = "";
+        for (var l = 0; l < keywords[k].length; l++){
+          buf += "<b>"+cc[j+l]+"</b>";
+          if (cc[j+l] != keywords[k][l]){
+            matched = false;
+          }
+        }
+        if (alpha.includes(cc[j+keywords[k].length]) || alpha.includes(cc[j-1])){
+          matched = false;
+        }
+        if (matched){
+          nc += buf;
+          j += keywords[k].length-1;
+          break;
+        }
+      }
+      if (!matched){
+        nc += "<x>"+cc[j]+"</x>"
+      }
+    }
+    codes[i].innerHTML = nc;
+    if (document.activeElement == codes[i]){
+      var c0 = Math.min(c,ce);
+      var c1 = Math.max(c,ce);
+      try{
+        setCaretPosition(codes[i],c0,0,c1,0);
+      }catch(e){
+        for (var eee = 0; eee < 10; eee++){
+          try{
+            codes[i].innerHTML += "<i></i>"
+            setCaretPosition(codes[i],c0,0,c1,0);
+            break;
+          }catch(e){}
+        }
+      }
+    }
+  }
+};NNL=0</script>
+<script>reset=function (id){
+  for (var i = 0; i < 999999; i++){
+    window.clearInterval(i);
+  }
+  setTimeout(()=>(highlight(true)),100);
+  setInterval(highlight,1600);
+};reset()</script>
+<body><h2>.random</h2>
+<div class='example-cell'><table style='border-collapse: collapse'><tr><td><code><b>/* Simplex Noise */</b></code></td><td><span class='example-btn' onclick="reset(); if (this.innerHTML=='[RUN]'){run('1');this.innerHTML='[STOP]'}else{this.innerHTML='[RUN]'}">[RUN]</span><span class='example-btn' onclick="document.getElementById('code-1').innerHTML=unescape('random.simplexSeed%28%28new%20Date%28%29%29.getTime%28%29%29%3B%0Avar%20t%20%3D%200%3B%0AsetInterval%28function%28%29%7B%0A%20%20context.fillStyle%3D%27white%27%3B%0A%20%20context.fillRect%280%2C0%2Ccanvas.width%2Ccanvas.height%29%0A%20%20for%20%28var%20y%20%3D%200%3B%20y%20%3C%20canvas.height%3B%20y+%3D8%29%7B%0A%20%20%20%20for%20%28var%20x%20%3D%200%3B%20x%20%3C%20canvas.width%3B%20x++%29%7B%0A%20%20%20%20%20%20var%20z%20%3D%20random.simplex%28x*0.01%2Cy*0.01%2Ct*0.01%29%3B%0A%20%20%20%20%20%20context.fillStyle%3D%22black%22%3B%0A%20%20%20%20%20%20context.fillRect%28x%2Cy-math.map%28z%2C0%2C1%2C-64%2C64%29%2C1%2C1%29%3B%0A%20%20%20%20%7D%20%0A%20%20%7D%0A%20%20t%20++%3B%0A%7D%2C%2010%29%3B');reset();">[RESET]</span></td>
+</tr><tr><td style='padding:0px'><pre id='code-1' class='example-code' style='width:512px; height:128px' contenteditable='true' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false' onkeyup='if (event.keyCode==13){console.log("++");NNL+=1}'>
+random.simplexSeed((new Date()).getTime());
+var t = 0;
+setInterval(function(){
+  context.fillStyle='white';
+  context.fillRect(0,0,canvas.width,canvas.height)
+  for (var y = 0; y < canvas.height; y+=8){
+    for (var x = 0; x < canvas.width; x++){
+      var z = random.simplex(x*0.01,y*0.01,t*0.01);
+      context.fillStyle="black";
+      context.fillRect(x,y-math.map(z,0,1,-64,64),1,1);
+    } 
+  }
+  t ++;
+}, 10);
+</pre></td>
+<td style='width:128px; padding:0px'><canvas id='canv-1' class='example-canv' width='128' height='128'></canvas></td>
+</tr></table></div><script>run('1'); setTimeout(reset, 1600)</script><div class='example-cell'><table style='border-collapse: collapse'><tr><td><code><b>/* Blue (Poisson-Disk) Noise */</b></code></td><td><span class='example-btn' onclick="reset(); if (this.innerHTML=='[RUN]'){run('2');this.innerHTML='[STOP]'}else{this.innerHTML='[RUN]'}">[RUN]</span><span class='example-btn' onclick="document.getElementById('code-2').innerHTML=unescape('var%20noise%20%3D%20random.blue%28%7Bdimension%3A2%2C%20iteration%3A%2030%7D%29%3B%0Avar%20t%20%3D%200%3B%0Afunction%20f%28%29%7B%0A%20%20var%20p%20%3D%20noise%28%29%3B%0A%20%20context.fillStyle%3D%22black%22%3B%0A%20%20context.fillRect%28p.x*canvas.width%2Cp.y*canvas.height%2C2%2C2%29%3B%0A%20%20t%20++%3B%0A%20%20if%20%28t%20%3C%201000%29%7B%0A%20%20%20%20setTimeout%28f%2C10%29%3B%0A%20%20%7D%0A%7D%0Af%28%29');reset();">[RESET]</span></td>
+</tr><tr><td style='padding:0px'><pre id='code-2' class='example-code' style='width:512px; height:128px' contenteditable='true' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false' onkeyup='if (event.keyCode==13){console.log("++");NNL+=1}'>
+var noise = random.blue({dimension:2, iteration: 30});
+var t = 0;
+function f(){
+  var p = noise();
+  context.fillStyle="black";
+  context.fillRect(p.x*canvas.width,p.y*canvas.height,2,2);
+  t ++;
+  if (t < 1000){
+    setTimeout(f,10);
+  }
+}
+f()
+</pre></td>
+<td style='width:128px; padding:0px'><canvas id='canv-2' class='example-canv' width='128' height='128'></canvas></td>
+</tr></table></div><script>run('2'); setTimeout(reset, 1600)</script><div class='example-cell'><table style='border-collapse: collapse'><tr><td><code><b>/* Plasma (Diamond-Square) Noise */</b></code></td><td><span class='example-btn' onclick="reset(); if (this.innerHTML=='[RUN]'){run('3');this.innerHTML='[STOP]'}else{this.innerHTML='[RUN]'}">[RUN]</span><span class='example-btn' onclick="document.getElementById('code-3').innerHTML=unescape('var%20noise%20%3D%20random.plasma%28%7Bn%3A7%2Cdetail%3A1%7D%29%3B%0Afor%20%28var%20y%20%3D%200%3B%20y%20%3C%20canvas.height%3B%20y++%29%7B%0A%20%20for%20%28var%20x%20%3D%200%3B%20x%20%3C%20canvas.width%3B%20x++%29%7B%0A%20%20%20%20var%20z%20%3D%20noise%28x/canvas.width%2Cy/canvas.height%29%3B%0A%20%20%20%20context.fillStyle%3Dcolor.css%28z*255%29%3B%0A%20%20%20%20context.fillRect%28x%2Cy%2C1%2C1%29%3B%0A%20%20%7D%20%0A%7D');reset();">[RESET]</span></td>
+</tr><tr><td style='padding:0px'><pre id='code-3' class='example-code' style='width:512px; height:128px' contenteditable='true' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false' onkeyup='if (event.keyCode==13){console.log("++");NNL+=1}'>
+var noise = random.plasma({n:7,detail:1});
+for (var y = 0; y < canvas.height; y++){
+  for (var x = 0; x < canvas.width; x++){
+    var z = noise(x/canvas.width,y/canvas.height);
+    context.fillStyle=color.css(z*255);
+    context.fillRect(x,y,1,1);
+  } 
+}
+</pre></td>
+<td style='width:128px; padding:0px'><canvas id='canv-3' class='example-canv' width='128' height='128'></canvas></td>
+</tr></table></div><script>run('3'); setTimeout(reset, 1600)</script><div class='example-cell'><table style='border-collapse: collapse'><tr><td><code><b>/* Loop Noise */</b></code></td><td><span class='example-btn' onclick="reset(); if (this.innerHTML=='[RUN]'){run('4');this.innerHTML='[STOP]'}else{this.innerHTML='[RUN]'}">[RUN]</span><span class='example-btn' onclick="document.getElementById('code-4').innerHTML=unescape('var%20t%20%3D%200%3B%0AsetInterval%28function%28%29%7B%0A%20%20context.fillStyle%3D%27white%27%3B%0A%20%20context.fillRect%280%2C0%2Ccanvas.width%2Ccanvas.height%29%0A%20%20for%20%28var%20i%20%3D%200%3B%20i%20%3C%20360%3B%20i++%29%7B%0A%20%20%20%20var%20a%20%3D%20i%20*%20Math.PI/180%3B%0A%20%20%20%20var%20n%20%3D%20random.loopNoise%28Math.PI%29%28a/2%2Ct*0.01%29%3B%0A%20%20%20%20var%20r%20%3D%20math.map%20%28n%2C%200%2C%201%2C%20canvas.width/5%2C%20canvas.width/2%29%3B%0A%20%20%20%20var%20x%20%3D%20canvas.width/2%20+%20r%20*%20Math.cos%28a%29%3B%0A%20%20%20%20var%20y%20%3D%20canvas.height/2%20+%20r%20*%20Math.sin%28a%29%3B%0A%20%20%20%20context.fillStyle%3D%22black%22%3B%0A%20%20%20%20context.fillRect%28x%2Cy%2C1%2C1%29%3B%0A%20%20%7D%0A%20%20t%20++%3B%0A%7D%2C%2010%29%3B');reset();">[RESET]</span></td>
+</tr><tr><td style='padding:0px'><pre id='code-4' class='example-code' style='width:512px; height:128px' contenteditable='true' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false' onkeyup='if (event.keyCode==13){console.log("++");NNL+=1}'>
+var t = 0;
+setInterval(function(){
+  context.fillStyle='white';
+  context.fillRect(0,0,canvas.width,canvas.height)
+  for (var i = 0; i < 360; i++){
+    var a = i * Math.PI/180;
+    var n = random.loopNoise(Math.PI)(a/2,t*0.01);
+    var r = math.map (n, 0, 1, canvas.width/5, canvas.width/2);
+    var x = canvas.width/2 + r * Math.cos(a);
+    var y = canvas.height/2 + r * Math.sin(a);
+    context.fillStyle="black";
+    context.fillRect(x,y,1,1);
+  }
+  t ++;
+}, 10);
+</pre></td>
+<td style='width:128px; padding:0px'><canvas id='canv-4' class='example-canv' width='128' height='128'></canvas></td>
+</tr></table></div><script>run('4'); setTimeout(reset, 1600)</script><div class='example-cell'><table style='border-collapse: collapse'><tr><td><code><b>/* Tile-able Noise */</b></code></td><td><span class='example-btn' onclick="reset(); if (this.innerHTML=='[RUN]'){run('5');this.innerHTML='[STOP]'}else{this.innerHTML='[RUN]'}">[RUN]</span><span class='example-btn' onclick="document.getElementById('code-5').innerHTML=unescape('random.simplexSeed%28%28new%20Date%28%29%29.getTime%28%29%29%3B%0Avar%20t%20%3D%200%3B%0Avar%20w%20%3D%203%3B%0AsetInterval%28function%28%29%7B%0A%20%20context.fillStyle%3D%27white%27%3B%0A%20%20context.fillRect%280%2C0%2Ccanvas.width%2Ccanvas.height%29%0A%20%20for%20%28var%20y%20%3D%200%3B%20y%20%3C%20canvas.height%3B%20y+%3D2%29%7B%0A%20%20%20%20for%20%28var%20x%20%3D%200%3B%20x%20%3C%20canvas.width%3B%20x+%3D2%29%7B%0A%20%20%20%20%20%20var%20z%20%3D%20random.tileNoise%28w%2C%20w%29%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%28w*x/canvas.width%20*1.2+%20t*0.1%2C%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20w*y/canvas.height*1.2+%20t*0.1%29%0A%20%20%20%20%20%20context.fillStyle%3Dcolor.css%28z*255%29%3B%0A%20%20%20%20%20%20context.fillRect%28x%2Cy%2C2%2C2%29%3B%0A%20%20%20%20%7D%20%0A%20%20%7D%0A%20%20t%20++%3B%0A%7D%2C%2010%29%3B');reset();">[RESET]</span></td>
+</tr><tr><td style='padding:0px'><pre id='code-5' class='example-code' style='width:512px; height:128px' contenteditable='true' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false' onkeyup='if (event.keyCode==13){console.log("++");NNL+=1}'>
+random.simplexSeed((new Date()).getTime());
+var t = 0;
+var w = 3;
+setInterval(function(){
+  context.fillStyle='white';
+  context.fillRect(0,0,canvas.width,canvas.height)
+  for (var y = 0; y < canvas.height; y+=2){
+    for (var x = 0; x < canvas.width; x+=2){
+      var z = random.tileNoise(w, w)
+                  (w*x/canvas.width *1.2+ t*0.1, 
+                   w*y/canvas.height*1.2+ t*0.1)
+      context.fillStyle=color.css(z*255);
+      context.fillRect(x,y,2,2);
+    } 
+  }
+  t ++;
+}, 10);
+</pre></td>
+<td style='width:128px; padding:0px'><canvas id='canv-5' class='example-canv' width='128' height='128'></canvas></td>
+</tr></table></div><script>run('5'); setTimeout(reset, 1600)</script><div class='example-cell'><table style='border-collapse: collapse'><tr><td><code><b>/* Weighted Randomness */</b></code></td><td><span class='example-btn' onclick="reset(); if (this.innerHTML=='[RUN]'){run('6');this.innerHTML='[STOP]'}else{this.innerHTML='[RUN]'}">[RUN]</span><span class='example-btn' onclick="document.getElementById('code-6').innerHTML=unescape('var%20t%20%3D%200%3B%0Afunction%20f%28%29%7B%0A%20%20var%20y%20%3D%20random.weighted%28%28x%29%3D%3E%28x*x%29%29%0A%20%20context.fillStyle%3D%22black%22%3B%0A%20%20context.fillRect%28%0A%20%20%20%20%20%20canvas.width*Math.random%28%29%2C%0A%20%20%20%20%20%20canvas.height*y%2C2%2C2%29%3B%0A%20%20t%20++%3B%0A%20%20if%20%28t%20%3C%201000%29%7B%0A%20%20%20%20setTimeout%28f%2C10%29%3B%0A%20%20%7D%0A%7D%0Af%28%29');reset();">[RESET]</span></td>
+</tr><tr><td style='padding:0px'><pre id='code-6' class='example-code' style='width:512px; height:128px' contenteditable='true' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false' onkeyup='if (event.keyCode==13){console.log("++");NNL+=1}'>
+var t = 0;
+function f(){
+  var y = random.weighted((x)=>(x*x))
+  context.fillStyle="black";
+  context.fillRect(
+      canvas.width*Math.random(),
+      canvas.height*y,2,2);
+  t ++;
+  if (t < 1000){
+    setTimeout(f,10);
+  }
+}
+f()
+</pre></td>
+<td style='width:128px; padding:0px'><canvas id='canv-6' class='example-canv' width='128' height='128'></canvas></td>
+</tr></table></div><script>run('6'); setTimeout(reset, 1600)</script><div class='example-cell'><table style='border-collapse: collapse'><tr><td><code><b>/* Fractal Brownian Motion */</b></code></td><td><span class='example-btn' onclick="reset(); if (this.innerHTML=='[RUN]'){run('7');this.innerHTML='[STOP]'}else{this.innerHTML='[RUN]'}">[RUN]</span><span class='example-btn' onclick="document.getElementById('code-7').innerHTML=unescape('random.valueNoiseSeed%28%28new%20Date%28%29%29.getTime%28%29%29%3B%0Avar%20t%20%3D%200%3B%0Af%20%3D%20function%28%29%7B%0A%20%20context.fillStyle%3D%27white%27%3B%0A%20%20context.fillRect%280%2C0%2Ccanvas.width%2Ccanvas.height%29%0A%20%20for%20%28var%20y%20%3D%200%3B%20y%20%3C%20canvas.height%3B%20y+%3D8%29%7B%0A%20%20%20%20for%20%28var%20x%20%3D%200%3B%20x%20%3C%20canvas.width%3B%20x+%3D1%29%7B%0A%20%20%20%20%20%20var%20z%20%3D%20random.fractal%0A%20%20%20%20%20%20%20%20%28random.valueNoise%2C%20%7Boctaves%3A1+t%7D%29%20%0A%20%20%20%20%20%20%20%20%28x*0.04%2C%20y*0.04%29%0A%20%20%20%20%20%20context.fillStyle%3D%22black%22%3B%0A%20%20%20%20%20%20context.fillRect%28x%2Cy-math.map%28z%2C0%2C1%2C-32%2C32%29%2C1%2C1%29%3B%0A%20%20%20%20%7D%20%0A%20%20%7D%0A%20%20t%20++%3B%0A%20%20if%20%28t%20%3C%2010%29%7B%0A%20%20%20%20setTimeout%28f%2C100%29%3B%0A%20%20%7D%0A%7D%0Af%28%29%3B');reset();">[RESET]</span></td>
+</tr><tr><td style='padding:0px'><pre id='code-7' class='example-code' style='width:512px; height:128px' contenteditable='true' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false' onkeyup='if (event.keyCode==13){console.log("++");NNL+=1}'>
+random.valueNoiseSeed((new Date()).getTime());
+var t = 0;
+f = function(){
+  context.fillStyle='white';
+  context.fillRect(0,0,canvas.width,canvas.height)
+  for (var y = 0; y < canvas.height; y+=8){
+    for (var x = 0; x < canvas.width; x+=1){
+      var z = random.fractal
+        (random.valueNoise, {octaves:1+t}) 
+        (x*0.04, y*0.04)
+      context.fillStyle="black";
+      context.fillRect(x,y-math.map(z,0,1,-32,32),1,1);
+    } 
+  }
+  t ++;
+  if (t < 10){
+    setTimeout(f,100);
+  }
+}
+f();
+</pre></td>
+<td style='width:128px; padding:0px'><canvas id='canv-7' class='example-canv' width='128' height='128'></canvas></td>
+</tr></table></div><script>run('7'); setTimeout(reset, 1600)</script><div>Read <a target='_parent' href='../../api/index.html#random'>API documentation</a></div></body>

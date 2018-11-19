@@ -1,0 +1,185 @@
+<link rel='stylesheet' href='./style.css'><script src='./Okb.js'></script><script>Okb.explode(1);</script><script>run=function (id){
+  var code = document.getElementById("code-"+id).innerText;
+  var header = "var canvas = document.getElementById('canv-"+id+"');\n"
+             + "var context = canvas.getContext('2d');\n"
+             + "context.fillStyle='white'; context.fillRect(0,0,canvas.width,canvas.height)\n"
+  // console.log(header+code)
+  try{
+    eval(header+code)
+  }catch(e){
+    try{
+      eval(header)
+      var es = e.toString();
+      var et = es.split(" ");
+      var wpl = 2;
+      var ln = 0;
+      for (var i = 0; i < et.length; i+=wpl){
+        ln ++;
+        eval("context.fillStyle='black';context.fillText(`"+et.slice(i,i+wpl).join(" ")+"`,0,"+(ln*10)+");")
+      }
+    }catch(f){
+      alert(e);
+    }
+  }
+}</script>
+<script>highlight=function (all){
+  function getCaretPosition(element, mode) {
+    var caretOffset = 0;
+    var doc = element.ownerDocument || element.document;
+    var win = doc.defaultView || doc.parentWindow;
+    var sel;
+
+    sel = win.getSelection();
+    if (sel.rangeCount > 0) {
+      var range = win.getSelection().getRangeAt(0);
+      var preCaretRange = range.cloneRange();
+      preCaretRange.selectNodeContents(element);
+      if (mode == "start"){
+        preCaretRange.setEnd(range.endContainer, range.endOffset);
+      }else{
+        preCaretRange.setEnd(range.startContainer, range.startOffset);
+      }
+      caretOffset = preCaretRange.toString().length;
+    }
+    return caretOffset;
+  }
+
+  function setCaretPosition(element,i,j,ie,je){
+    var range = document.createRange();
+    var sel = window.getSelection();
+    range.setStart(element.childNodes[i], j);
+    range.setEnd(element.childNodes[ie], je);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+  var codes = document.getElementsByClassName("example-code");
+
+  var keywords = ["break","case","catch","continue","debugger","default","delete","do","else","finally","for","function",
+                  "if","in","instanceof","new","return","switch","this","throw","try","typeof","var","void","while","with"]
+  keywords = keywords.concat(["canvas","context"])
+  var alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890$_"
+
+  for (var i = 0; i < codes.length; i++){
+    if ((!all) && document.activeElement != codes[i]){
+      continue;
+    }
+    var c = getCaretPosition(codes[i],"start")+NNL;
+    var ce = getCaretPosition(codes[i],"end")+NNL;
+    NNL = 0;
+    var cc = codes[i].innerText;
+    var nc = ""
+    for (var j = 0; j < cc.length; j++){
+      var matched = false
+      for (var k = 0; k < keywords.length; k++){
+        matched = true;
+        var buf = "";
+        for (var l = 0; l < keywords[k].length; l++){
+          buf += "<b>"+cc[j+l]+"</b>";
+          if (cc[j+l] != keywords[k][l]){
+            matched = false;
+          }
+        }
+        if (alpha.includes(cc[j+keywords[k].length]) || alpha.includes(cc[j-1])){
+          matched = false;
+        }
+        if (matched){
+          nc += buf;
+          j += keywords[k].length-1;
+          break;
+        }
+      }
+      if (!matched){
+        nc += "<x>"+cc[j]+"</x>"
+      }
+    }
+    codes[i].innerHTML = nc;
+    if (document.activeElement == codes[i]){
+      var c0 = Math.min(c,ce);
+      var c1 = Math.max(c,ce);
+      try{
+        setCaretPosition(codes[i],c0,0,c1,0);
+      }catch(e){
+        for (var eee = 0; eee < 10; eee++){
+          try{
+            codes[i].innerHTML += "<i></i>"
+            setCaretPosition(codes[i],c0,0,c1,0);
+            break;
+          }catch(e){}
+        }
+      }
+    }
+  }
+};NNL=0</script>
+<script>reset=function (id){
+  for (var i = 0; i < 999999; i++){
+    window.clearInterval(i);
+  }
+  setTimeout(()=>(highlight(true)),100);
+  setInterval(highlight,1600);
+};reset()</script>
+<body><h2>.geometry</h2>
+<div class='example-cell'><table style='border-collapse: collapse'><tr><td><code><b>/* Point in Polygon? */</b></code></td><td><span class='example-btn' onclick="reset(); if (this.innerHTML=='[RUN]'){run('1');this.innerHTML='[STOP]'}else{this.innerHTML='[RUN]'}">[RUN]</span><span class='example-btn' onclick="document.getElementById('code-1').innerHTML=unescape('var%20vertices%20%3D%20%5B%5B20%2C20%5D%2C%5B80%2C10%5D%2C%5B110%2C110%5D%2C%5B10%2C60%5D%2C%5B50%2C50%5D%5D%0Agraphics.polygon%28%7Bcontext%3A%20context%7D%29%28vertices%29%0Avar%20t%20%3D%200%3B%0AsetInterval%28function%28%29%7B%0A%20%20var%20p%20%3D%20%5BMath.random%28%29*canvas.width%2C%0A%20%20%20%20%20%20%20%20%20%20%20Math.random%28%29*canvas.height%5D%3B%0A%20%20var%20b%20%3D%20geometry.pointInPolygon%28p%2Cvertices%29%3B%0A%20%20context.fillStyle%20%3D%20b%3F%22black%22%3A%22silver%22%3B%0A%20%20context.fillRect%28p.x%2C%20p.y%2C%203%2C%203%29%3B%0A%20%20t%20++%3B%0A%7D%2C%2010%29%3B');reset();">[RESET]</span></td>
+</tr><tr><td style='padding:0px'><pre id='code-1' class='example-code' style='width:512px; height:128px' contenteditable='true' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false' onkeyup='if (event.keyCode==13){console.log("++");NNL+=1}'>
+var vertices = [[20,20],[80,10],[110,110],[10,60],[50,50]]
+graphics.polygon({context: context})(vertices)
+var t = 0;
+setInterval(function(){
+  var p = [Math.random()*canvas.width,
+           Math.random()*canvas.height];
+  var b = geometry.pointInPolygon(p,vertices);
+  context.fillStyle = b?"black":"silver";
+  context.fillRect(p.x, p.y, 3, 3);
+  t ++;
+}, 10);
+</pre></td>
+<td style='width:128px; padding:0px'><canvas id='canv-1' class='example-canv' width='128' height='128'></canvas></td>
+</tr></table></div><script>run('1'); setTimeout(reset, 1600)</script><div class='example-cell'><table style='border-collapse: collapse'><tr><td><code><b>/* Triangulate */</b></code></td><td><span class='example-btn' onclick="reset(); if (this.innerHTML=='[RUN]'){run('2');this.innerHTML='[STOP]'}else{this.innerHTML='[RUN]'}">[RUN]</span><span class='example-btn' onclick="document.getElementById('code-2').innerHTML=unescape('var%20vertices%20%3D%20%5B%5B20%2C20%5D%2C%5B80%2C10%5D%2C%5B110%2C110%5D%2C%5B10%2C60%5D%2C%5B50%2C50%5D%2C%5B20%2C20%5D%5D%0Avertices%20%3D%20geometry.redivide%28vertices%2C20%29.slice%280%2C-1%29%3B%0Avar%20t%20%3D%200%3B%0AsetInterval%28function%28%29%7B%0A%20%20context.fillStyle%3D%27white%27%3B%0A%20%20context.fillRect%280%2C0%2Ccanvas.width%2Ccanvas.height%29%0A%20%20var%20shifted%20%3D%20%5B%5D%0A%20%20for%20%28var%20i%20%3D%200%3B%20i%20%3C%20vertices.length%3B%20i++%29%7B%0A%20%20%20%20shifted.push%28%5B%0A%20%20%20%20%20%20vertices%5Bi%5D.x%20+%20random.perlin%28i%2Ct*0.01%2C1%29%20*%2020%20-%2010%2C%0A%20%20%20%20%20%20vertices%5Bi%5D.y%20+%20random.perlin%28i%2Ct*0.01%2C2%29%20*%2020%20-%2010%0A%20%20%20%20%5D%29%0A%20%20%7D%0A%20%20var%20triangles%20%3D%20geometry.triangulate%28shifted%29%3B%0A%20%20for%20%28var%20i%20%3D%200%3B%20i%20%3C%20triangles.length%3B%20i++%29%7B%0A%20%20%20%20graphics.polygon%28%7Bcontext%3Acontext%7D%29%28triangles%5Bi%5D%29%0A%20%20%7D%0A%20%20t%20++%3B%0A%7D%2C%2010%29%3B');reset();">[RESET]</span></td>
+</tr><tr><td style='padding:0px'><pre id='code-2' class='example-code' style='width:512px; height:128px' contenteditable='true' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false' onkeyup='if (event.keyCode==13){console.log("++");NNL+=1}'>
+var vertices = [[20,20],[80,10],[110,110],[10,60],[50,50],[20,20]]
+vertices = geometry.redivide(vertices,20).slice(0,-1);
+var t = 0;
+setInterval(function(){
+  context.fillStyle='white';
+  context.fillRect(0,0,canvas.width,canvas.height)
+  var shifted = []
+  for (var i = 0; i < vertices.length; i++){
+    shifted.push([
+      vertices[i].x + random.perlin(i,t*0.01,1) * 20 - 10,
+      vertices[i].y + random.perlin(i,t*0.01,2) * 20 - 10
+    ])
+  }
+  var triangles = geometry.triangulate(shifted);
+  for (var i = 0; i < triangles.length; i++){
+    graphics.polygon({context:context})(triangles[i])
+  }
+  t ++;
+}, 10);
+</pre></td>
+<td style='width:128px; padding:0px'><canvas id='canv-2' class='example-canv' width='128' height='128'></canvas></td>
+</tr></table></div><script>run('2'); setTimeout(reset, 1600)</script><div class='example-cell'><table style='border-collapse: collapse'><tr><td><code><b>/* Line Equation */</b></code></td><td><span class='example-btn' onclick="reset(); if (this.innerHTML=='[RUN]'){run('3');this.innerHTML='[STOP]'}else{this.innerHTML='[RUN]'}">[RUN]</span><span class='example-btn' onclick="document.getElementById('code-3').innerHTML=unescape('var%20t%20%3D%200%3B%0AsetInterval%28function%28%29%7B%0A%20%20context.fillStyle%3D%27white%27%3B%0A%20%20context.fillRect%280%2C0%2Ccanvas.width%2Ccanvas.height%29%3B%0A%20%20var%20p%20%3D%20%5B%0A%20%20%20%20random.perlin%28t*0.005%2C1%29%20*%20canvas.width%2C%0A%20%20%20%20random.perlin%28t*0.005%2C2%29%20*%20canvas.height%0A%20%20%5D%3B%0A%20%20var%20q%20%3D%20%5B%0A%20%20%20%20random.perlin%28t*0.005%2C3%29%20*%20canvas.width%2C%0A%20%20%20%20random.perlin%28t*0.005%2C4%29%20*%20canvas.height%0A%20%20%5D%3B%0A%20%20var%20%5Ba%2Cb%2Cc%5D%20%3D%20geometry.lineEquation%20%20%28p%2Cq%29%3B%0A%20%20var%20%5Bm%2Ck%5D%20%20%20%3D%20geometry.slopeIntercept%28p%2Cq%29%3B%0A%20%20graphics.polygon%28%7Bcontext%3Acontext%7D%29%28%5Bp%2Cq%5D%29%3B%0A%20%20context.fillStyle%20%3D%20%22black%22%3B%0A%20%20context.fillText%28%22%28%22+a.toFixed%281%29+%22%29x+%22%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20+%22%28%22+b.toFixed%281%29+%22%29y+%22%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20+%22%28%22+c.toFixed%281%29+%22%29%3D0%22%2C0%2C10%29%3B%0A%20%20context.fillText%28%22y%3D%28%22+m.toFixed%281%29+%22%29x+%28%22+k.toFixed%281%29+%22%29%22%2C0%2C25%29%3B%0A%20%20t%20++%3B%0A%7D%2C%2010%29%3B');reset();">[RESET]</span></td>
+</tr><tr><td style='padding:0px'><pre id='code-3' class='example-code' style='width:512px; height:128px' contenteditable='true' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false' onkeyup='if (event.keyCode==13){console.log("++");NNL+=1}'>
+var t = 0;
+setInterval(function(){
+  context.fillStyle='white';
+  context.fillRect(0,0,canvas.width,canvas.height);
+  var p = [
+    random.perlin(t*0.005,1) * canvas.width,
+    random.perlin(t*0.005,2) * canvas.height
+  ];
+  var q = [
+    random.perlin(t*0.005,3) * canvas.width,
+    random.perlin(t*0.005,4) * canvas.height
+  ];
+  var [a,b,c] = geometry.lineEquation  (p,q);
+  var [m,k]   = geometry.slopeIntercept(p,q);
+  graphics.polygon({context:context})([p,q]);
+  context.fillStyle = "black";
+  context.fillText("("+a.toFixed(1)+")x+"
+                  +"("+b.toFixed(1)+")y+"
+                  +"("+c.toFixed(1)+")=0",0,10);
+  context.fillText("y=("+m.toFixed(1)+")x+("+k.toFixed(1)+")",0,25);
+  t ++;
+}, 10);
+</pre></td>
+<td style='width:128px; padding:0px'><canvas id='canv-3' class='example-canv' width='128' height='128'></canvas></td>
+</tr></table></div><script>run('3'); setTimeout(reset, 1600)</script><div>Read <a target='_parent' href='../../api/index.html#geometry'>API documentation</a></div></body>

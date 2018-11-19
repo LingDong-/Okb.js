@@ -1,0 +1,147 @@
+<link rel='stylesheet' href='./style.css'><script src='./Okb.js'></script><script>Okb.explode(1);</script><script>run=function (id){
+  var code = document.getElementById("code-"+id).innerText;
+  var header = "var canvas = document.getElementById('canv-"+id+"');\n"
+             + "var context = canvas.getContext('2d');\n"
+             + "context.fillStyle='white'; context.fillRect(0,0,canvas.width,canvas.height)\n"
+  // console.log(header+code)
+  try{
+    eval(header+code)
+  }catch(e){
+    try{
+      eval(header)
+      var es = e.toString();
+      var et = es.split(" ");
+      var wpl = 2;
+      var ln = 0;
+      for (var i = 0; i < et.length; i+=wpl){
+        ln ++;
+        eval("context.fillStyle='black';context.fillText(`"+et.slice(i,i+wpl).join(" ")+"`,0,"+(ln*10)+");")
+      }
+    }catch(f){
+      alert(e);
+    }
+  }
+}</script>
+<script>highlight=function (all){
+  function getCaretPosition(element, mode) {
+    var caretOffset = 0;
+    var doc = element.ownerDocument || element.document;
+    var win = doc.defaultView || doc.parentWindow;
+    var sel;
+
+    sel = win.getSelection();
+    if (sel.rangeCount > 0) {
+      var range = win.getSelection().getRangeAt(0);
+      var preCaretRange = range.cloneRange();
+      preCaretRange.selectNodeContents(element);
+      if (mode == "start"){
+        preCaretRange.setEnd(range.endContainer, range.endOffset);
+      }else{
+        preCaretRange.setEnd(range.startContainer, range.startOffset);
+      }
+      caretOffset = preCaretRange.toString().length;
+    }
+    return caretOffset;
+  }
+
+  function setCaretPosition(element,i,j,ie,je){
+    var range = document.createRange();
+    var sel = window.getSelection();
+    range.setStart(element.childNodes[i], j);
+    range.setEnd(element.childNodes[ie], je);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+  var codes = document.getElementsByClassName("example-code");
+
+  var keywords = ["break","case","catch","continue","debugger","default","delete","do","else","finally","for","function",
+                  "if","in","instanceof","new","return","switch","this","throw","try","typeof","var","void","while","with"]
+  keywords = keywords.concat(["canvas","context"])
+  var alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890$_"
+
+  for (var i = 0; i < codes.length; i++){
+    if ((!all) && document.activeElement != codes[i]){
+      continue;
+    }
+    var c = getCaretPosition(codes[i],"start")+NNL;
+    var ce = getCaretPosition(codes[i],"end")+NNL;
+    NNL = 0;
+    var cc = codes[i].innerText;
+    var nc = ""
+    for (var j = 0; j < cc.length; j++){
+      var matched = false
+      for (var k = 0; k < keywords.length; k++){
+        matched = true;
+        var buf = "";
+        for (var l = 0; l < keywords[k].length; l++){
+          buf += "<b>"+cc[j+l]+"</b>";
+          if (cc[j+l] != keywords[k][l]){
+            matched = false;
+          }
+        }
+        if (alpha.includes(cc[j+keywords[k].length]) || alpha.includes(cc[j-1])){
+          matched = false;
+        }
+        if (matched){
+          nc += buf;
+          j += keywords[k].length-1;
+          break;
+        }
+      }
+      if (!matched){
+        nc += "<x>"+cc[j]+"</x>"
+      }
+    }
+    codes[i].innerHTML = nc;
+    if (document.activeElement == codes[i]){
+      var c0 = Math.min(c,ce);
+      var c1 = Math.max(c,ce);
+      try{
+        setCaretPosition(codes[i],c0,0,c1,0);
+      }catch(e){
+        for (var eee = 0; eee < 10; eee++){
+          try{
+            codes[i].innerHTML += "<i></i>"
+            setCaretPosition(codes[i],c0,0,c1,0);
+            break;
+          }catch(e){}
+        }
+      }
+    }
+  }
+};NNL=0</script>
+<script>reset=function (id){
+  for (var i = 0; i < 999999; i++){
+    window.clearInterval(i);
+  }
+  setTimeout(()=>(highlight(true)),100);
+  setInterval(highlight,1600);
+};reset()</script>
+<body><h2>.vector</h2>
+<div class='example-cell'><table style='border-collapse: collapse'><tr><td><code><b>/* Rotating Vectors */</b></code></td><td><span class='example-btn' onclick="reset(); if (this.innerHTML=='[RUN]'){run('1');this.innerHTML='[STOP]'}else{this.innerHTML='[RUN]'}">[RUN]</span><span class='example-btn' onclick="document.getElementById('code-1').innerHTML=unescape('var%20w%20%3D%20canvas.width/4%3B%0Avar%20vertices%20%3D%20%5B%5B-w%2C-w%2C-w%5D%2C%5B-w%2Cw%2C-w%5D%2C%5Bw%2Cw%2C-w%5D%2C%5Bw%2C-w%2C-w%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%5B-w%2C-w%2Cw%5D%2C%20%5B-w%2Cw%2Cw%5D%2C%20%5Bw%2Cw%2Cw%5D%2C%20%5Bw%2C-w%2Cw%5D%5D%0Avar%20drawPoly%20%3D%20graphics.polygon%28%7B%0A%20%20context%3Acontext%2C%0A%20%20fill%3A%20undefined%2C%0A%20%20offset%3A%5Bcanvas.width/2%2C%20canvas.height/2%5D%0A%7D%29%0Avar%20t%20%3D%200%3B%0AsetInterval%28function%28%29%7B%0A%20%20context.fillStyle%3D%27white%27%3B%0A%20%20context.fillRect%280%2C0%2Ccanvas.width%2Ccanvas.height%29%3B%0A%20%20for%20%28var%20i%20%3D%200%3B%20i%20%3C%20vertices.length%3B%20i++%29%7B%0A%20%20%20%20vertices%5Bi%5D%20%3D%20vector.rotateEuler%28vertices%5Bi%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%7Bx%3AMath.sin%28t*0.1%29*0.1%2Cy%3A0.05%2Cz%3A0%7D%29%3B%0A%20%20%7D%0A%20%20drawPoly%28vertices.slice%280%2C4%29%29%3B%0A%20%20drawPoly%28vertices.slice%284%2C8%29%29%3B%0A%20%20drawPoly%28%5Bvertices%5B0%5D%2Cvertices%5B1%5D%2Cvertices%5B5%5D%2Cvertices%5B4%5D%5D%29%3B%0A%20%20drawPoly%28%5Bvertices%5B2%5D%2Cvertices%5B3%5D%2Cvertices%5B7%5D%2Cvertices%5B6%5D%5D%29%3B%0A%20%20t%20++%3B%0A%7D%2C10%29');reset();">[RESET]</span></td>
+</tr><tr><td style='padding:0px'><pre id='code-1' class='example-code' style='width:512px; height:128px' contenteditable='true' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false' onkeyup='if (event.keyCode==13){console.log("++");NNL+=1}'>
+var w = canvas.width/4;
+var vertices = [[-w,-w,-w],[-w,w,-w],[w,w,-w],[w,-w,-w],
+                [-w,-w,w], [-w,w,w], [w,w,w], [w,-w,w]]
+var drawPoly = graphics.polygon({
+  context:context,
+  fill: undefined,
+  offset:[canvas.width/2, canvas.height/2]
+})
+var t = 0;
+setInterval(function(){
+  context.fillStyle='white';
+  context.fillRect(0,0,canvas.width,canvas.height);
+  for (var i = 0; i < vertices.length; i++){
+    vertices[i] = vector.rotateEuler(vertices[i],
+                  {x:Math.sin(t*0.1)*0.1,y:0.05,z:0});
+  }
+  drawPoly(vertices.slice(0,4));
+  drawPoly(vertices.slice(4,8));
+  drawPoly([vertices[0],vertices[1],vertices[5],vertices[4]]);
+  drawPoly([vertices[2],vertices[3],vertices[7],vertices[6]]);
+  t ++;
+},10)
+</pre></td>
+<td style='width:128px; padding:0px'><canvas id='canv-1' class='example-canv' width='128' height='128'></canvas></td>
+</tr></table></div><script>run('1'); setTimeout(reset, 1600)</script><div>Read <a target='_parent' href='../../api/index.html#vector'>API documentation</a></div></body>

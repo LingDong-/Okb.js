@@ -1,0 +1,11 @@
+<link rel='stylesheet' href='./style.css'><script>resizeIframe=function resizeIframe(obj){
+    console.log(obj.contentWindow.document.body.scrollHeight)
+    obj.style.height = obj.contentWindow.document.body.scrollHeight+'px';
+    obj.style.width = obj.contentWindow.document.body.scrollWidth+'px';
+    window.scrollTo(0,0);
+    console.log(obj.style.height);
+  }</script><script>positionIframe=function positionIframe(){
+    var frame = document.getElementById("example-iframe");
+    frame.style.left = Math.max(200,window.innerWidth/2-320)+"px";
+    setTimeout(positionIframe,2000)
+  }</script><body><iframe src='./pages/random.html' frameborder='0' onload='resizeIframe(this)' id='example-iframe'></iframe><div class='toc-list'><h2>Okb.js</h2><div class="toc-btn" onclick="document.getElementById('example-iframe').src='./pages/'+this.innerText+'.html';">random</div><div class="toc-btn" onclick="document.getElementById('example-iframe').src='./pages/'+this.innerText+'.html';">geometry</div><div class="toc-btn" onclick="document.getElementById('example-iframe').src='./pages/'+this.innerText+'.html';">curves</div><div class="toc-btn" onclick="document.getElementById('example-iframe').src='./pages/'+this.innerText+'.html';">graphics</div><div class="toc-btn" onclick="document.getElementById('example-iframe').src='./pages/'+this.innerText+'.html';">vector</div><div class="toc-btn" onclick="document.getElementById('example-iframe').src='./pages/'+this.innerText+'.html';">texture</div></div><script>positionIframe()</script></body>

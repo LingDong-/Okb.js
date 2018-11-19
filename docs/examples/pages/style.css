@@ -1,0 +1,60 @@
+body{
+    background-color: white;
+    font-family: sans-serif;
+    text-align: center;
+}
+
+.example-cell{
+    background-color: white;
+    border-radius: 8px;
+    border: 1px solid black;
+    margin-top: 32px;
+    margin-bottom: 32px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 5px;
+    padding-bottom: 10px;
+    width: 641px;
+
+}
+.example-canv{
+/*    border-top: 1px solid black;
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;*/
+    border: 1px solid black;
+    margin: 0px;
+}
+.example-code{
+    width: 512px;
+    overflow: scroll;
+    overflow-x: scroll;
+    /*border-left: 1px solid black;*/
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    /*padding-left: 6px;*/
+    margin: 0px;
+    outline:none;
+    /*white-space: pre-wrap;*/
+}
+::selection {
+    color: white;
+    background: black;
+}
+
+.example-btn{
+    font-family: monospace;
+    cursor: pointer;
+    font-weight: bold;
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
+.example-btn:hover{
+    background-color: black;
+    color: white;
+}
