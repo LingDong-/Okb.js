@@ -227,6 +227,6 @@ var generateExampleBook = function(dir){
   }
 }
 
-generateExampleBook();
+generateExampleBook("docs/examples");
 
 
