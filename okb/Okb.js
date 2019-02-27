@@ -1,26 +1,29 @@
+//   ____  _    _     
+//  / __ \| |  | |    
+// | |  | | | _| |__  
+// | |  | | |/ / '_ \ 
+// | |__| |   <| |_) |
+//  \____/|_|\_\_.__/ 
+//                    
+// Procedural generation toolkit for Javascript - noises, randomness, curves, and more
+
 
 // index arrays with .x, .y, .z and negative indices
-Object.defineProperty(Array.prototype, "x", {
-    get: function () {return this[0]},
-    set: function (n) {this[0] = n},
-});
-Object.defineProperty(Array.prototype, "y", {
-    get: function () {return this[1]},
-    set: function (n) {this[1] = n},
-});
-Object.defineProperty(Array.prototype, "z", {
-    get: function () {return this[2]},
-    set: function (n) {this[2] = n},
-});
-
-for (var i = 1; i < 4; i++){
-  function f(i){
-    Object.defineProperty(Array.prototype, "-"+i, {
-        get: function () {return this[this.length-i]},
-        set: function (n) {this[this.length-i] = n},
-    });
-  }
-  f(i)
+if (("x" in []) || ("y" in []) || ("z" in [])){
+  console.log("Warning: Faied to define xyz property of Arrays, vectors might not work as expected.")
+}else{
+  Object.defineProperty(Array.prototype, "x", {
+      get: function () {return this[0]},
+      set: function (n) {this[0] = n},
+  });
+  Object.defineProperty(Array.prototype, "y", {
+      get: function () {return this[1]},
+      set: function (n) {this[1] = n},
+  });
+  Object.defineProperty(Array.prototype, "z", {
+      get: function () {return this[2]},
+      set: function (n) {this[2] = n},
+  });
 }
 
 
@@ -53,7 +56,7 @@ var Okb = new function(){var those = this;
       if (m instanceof Array){
         return [x,y].concat((z != undefined && m.z != undefined) ? [z] : [])
       }else{
-        var v = like == undefined ? {x:x,y:y} : Object.assign(like,{x:x,y:y})
+        var v = like == undefined ? {x:x,y:y} : Object.assign({},like,{x:x,y:y})
         if (z != undefined && (m == undefined || m.z != undefined)) {v.z = z};
         return v;
       }
@@ -201,7 +204,7 @@ var Okb = new function(){var those = this;
      * @returns {Object|number[]} difference vector
      */
     this.subtract = function(u,v){
-      v0 = validate(u)
+      var v0 = validate(u)
       v = validate(v)
       return that.vector(v0.x-v.x,v0.y-v.y,v0.z-v.z, u)
     }
@@ -225,7 +228,7 @@ var Okb = new function(){var those = this;
       var _v = v
       v = validate(v)
       var p = 1/that.magnitude(v)
-      return that.vector(x*p,y*p,z*p, _v)
+      return that.vector(v.x*p,v.y*p,v.z*p, _v)
     }
     /**
      * Lerp (linear-interpolation) between two vectors
@@ -236,8 +239,8 @@ var Okb = new function(){var those = this;
      * @returns {number} a new vector
      */
     this.lerp = function(u,v,t){
-      v0 = validate(u)
-      v1 = validate(v)
+      var v0 = validate(u)
+      var v1 = validate(v)
       return that.vector(v0.x*(1-t)+v1.x*t,v0.y*(1-t)+v1.y*t,v0.z*(1-t)+v1.z*t, u)
     }
     /**
@@ -249,8 +252,8 @@ var Okb = new function(){var those = this;
     this.distance = function(){
       var acc = 0
       for (var i = 0; i < arguments.length-1; i++){
-        v0 = validate(arguments[i])
-        v1 = validate(arguments[i+1])
+        var v0 = validate(arguments[i])
+        var v1 = validate(arguments[i+1])
         acc += Math.sqrt(Math.pow(v0.x-v1.x,2) + Math.pow(v0.y-v1.y,2) + Math.pow(v0.z-v1.z,2))
       }
       return acc;
@@ -780,7 +783,7 @@ var Okb = new function(){var those = this;
         z = (z!=undefined) ? z : 0
         var a = 0.0
         for (var i = 0; i < octaves; i++){
-          n = func(x,y,z)
+          var n = func(x,y,z)
           a += b*n
           b *= s        
           var _x = f*(m3[0][0]*x+m3[0][1]*y+m3[0][2]*z)
@@ -1079,6 +1082,17 @@ var Okb = new function(){var those = this;
       return pow(Math.E,-18*pow(x-0.5,2));
     }
     /**
+     * 2D Gaussian
+     * @memberof curves
+     * @param {number} x `0<=x<=1`
+     * @param {number} y `0<=y<=1`
+     * @returns {number} `z` `0<=y<=1`
+     */
+    this.gaussian2d = function(x,y){
+      var sig = 1/5;
+      return Math.exp(-Math.pow(x-0.5,2)/(2*sig*sig)-Math.pow(y-0.5,2)/(2*sig*sig))  
+    }
+    /**
      * Sigmoid curve
      * @memberof curves
      * @param {number} x `0<=x<=1`
@@ -1125,11 +1139,11 @@ var Okb = new function(){var those = this;
      */
     this.squircle = function(r,a){
       return function(th){
-        while (th > PI/2){
-          th -= PI/2
+        while (th > Math.PI/2){
+          th -= Math.PI/2
         }
         while (th < 0){
-          th += PI/2
+          th += Math.PI/2
         }
         return r*pow(1/(pow(cos(th),a)+pow(sin(th),a)),1/a)
       }
@@ -1440,18 +1454,26 @@ var Okb = new function(){var those = this;
      * @memberof geometry
      * @param {(Object|number[])[]} ln0 first line specified by an array containing 2 points
      * @param {(Object|number[])[]} ln1 second line specified by an array containing 2 points
+     * @param {boolean} inclusive whether end points should be included
      * @returns {boolean|Object|number[]} point of intersection, or `false` if there isn't one.
      */
-    this.intersect = function(ln0,ln1){
+    this.intersect = function(ln0,ln1,inclusive){
+      if (inclusive == undefined){inclusive = true;}
       var le0 = that.slopeIntercept(...ln0)
       var le1 = that.slopeIntercept(...ln1)
       var den = (le0[0]-le1[0])
       if (den == 0){return false}
       var x = (le1[1]-le0[1])/den
       var y = le0[0]*x+le0[1]
-      function onSeg(p,ln){//non-inclusive
-        return Math.min(ln[0].x,ln[1].x) <= p.x&&p.x <= Math.max(ln[0].x,ln[1].x)
-            && Math.min(ln[0].y,ln[1].y) <= p.y&&p.y <= Math.max(ln[0].y,ln[1].y)
+      function onSeg(p,ln){
+        if (inclusive){
+          return Math.min(ln[0].x,ln[1].x) <= p.x&&p.x <= Math.max(ln[0].x,ln[1].x)
+              && Math.min(ln[0].y,ln[1].y) <= p.y&&p.y <= Math.max(ln[0].y,ln[1].y)
+        }else{
+          var ep = 0.01;
+          return Math.min(ln[0].x,ln[1].x)+ep < p.x&&p.x < Math.max(ln[0].x,ln[1].x)-ep
+              && Math.min(ln[0].y,ln[1].y)+ep < p.y&&p.y < Math.max(ln[0].y,ln[1].y)-ep
+        }
       }
       if (onSeg([x,y],ln0) && onSeg([x,y],ln1)){return those.vector.vector(x,y,0,ln0[0])}
       return false
@@ -1726,6 +1748,51 @@ var Okb = new function(){var those = this;
       }
       return rlist
     }
+    
+    /**
+     * Get the convex hull of an array of points
+     * @memberof geometry
+     * @param {(Object|number[])[]} plist array of points
+     * @returns {(Object|number[])[]} the convex hull
+     */
+    this.convexHull = function(plist){
+      // Three points are a counter-clockwise turn if ccw > 0, clockwise if
+      // ccw < 0, and collinear if ccw = 0 because ccw is a determinant that
+      // gives twice the signed  area of the triangle formed by p1, p2 and p3.
+      function ccw(p1, p2, p3){
+        return (p2.x - p1.x)*(p3.y - p1.y) - (p2.y - p1.y)*(p3.x - p1.x)
+      }
+      function lowestY(plist){
+        var mi = 0;
+        var mv = 1/0;
+        for (var i = 0; i < plist.length; i++){
+          if (plist[i].y < mv){
+            mv = plist[i].y;
+            mi = i;
+          }
+        }
+        return mi;
+      }
+      
+      var N = plist.length;
+      var points = plist.slice();
+      var p = points.splice(lowestY(plist),1)[0];
+      var keyfunc = (q)=>(Math.atan2(q.y-p.y, q.x-p.x));
+      points.sort((a,b)=>(keyfunc(a)-keyfunc(b)));      
+      points.unshift(p);
+
+      var stack = []
+      stack.push(points[0]);
+      stack.push(points[1]);
+
+      for (var i = 2; i < points.length; i++){
+        while (stack.length >= 2 && ccw(stack[stack.length-2], stack[stack.length-1], points[i]) <= 0){
+          stack.pop();
+        }
+        stack.push(points[i])
+      }
+      return stack;
+    }
   }
 
 
@@ -1799,7 +1866,7 @@ var Okb = new function(){var those = this;
               context.lineTo(points[0].x+offset.x,points[0].y+offset.y);
             }
             context.strokeStyle = those.color.css(stroke);
-            context.strokeWidth = strokeWidth;
+            context.lineWidth = strokeWidth;
             context.stroke();
           }
         }else if (backend == "svg"){
@@ -1869,7 +1936,7 @@ var Okb = new function(){var those = this;
 
       return function(points){
         var resample = (args.resample != undefined) ? args.resample : Math.ceil(those.vector.distance.apply(null,points) / 10);
-        var args1 = Object.assign(args,{fill:color, stroke:args.stroke})
+        var args1 = Object.assign({},args,{fill:color, stroke:args.stroke})
         var pts = points;
         if (resample > 0){
           pts = those.geometry.redivide(pts,resample);

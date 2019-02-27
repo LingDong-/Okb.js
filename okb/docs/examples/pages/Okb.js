@@ -1,3 +1,12 @@
+//   ____  _    _     
+//  / __ \| |  | |    
+// | |  | | | _| |__  
+// | |  | | |/ / '_ \ 
+// | |__| |   <| |_) |
+//  \____/|_|\_\_.__/ 
+//                    
+// Procedural generation toolkit for Javascript - noises, randomness, curves, and more
+
 
 // index arrays with .x, .y, .z and negative indices
 if (("x" in []) || ("y" in []) || ("z" in [])){
