@@ -1974,7 +1974,7 @@ var Okb = new function(){var those = this;
    * Utilities for drawing procedurally generated visuals. 
    * Supports multiple backends such as HTML Canvas, SVG (Scalable Vector Graphics), and p5.js.
    * @property {string} [BACKEND="canvas"] `"canvas"`|`"svg"`|`"p5"`
-   * @property {string} CONTEXT the context provided by the backend.
+   * @property {Object} CONTEXT the context specific to the backend.
    * For HTML Canvas, this would be `canvas.getContext('2d')`; For p5.js, this would be 
    * the `window` object if in global mode, or the `sketch` object in instance mode;
    * For svg, this property is not used;
@@ -2183,7 +2183,7 @@ var Okb = new function(){var those = this;
      * @memberof color
      * @param {number} h hue, `0<=h<=360`
      * @param {number} s saturation, `0<=s<=1`
-     * @param {number} t value (brightness), `0<=v<=1`
+     * @param {number} v value (brightness), `0<=v<=1`
      * @returns {number[]} `[r, g, b]` in `[0, 255] x [0, 255] x [0, 255]`
      */
     this.hsv = function(h,s,v){
