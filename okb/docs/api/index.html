@@ -7207,8 +7207,8 @@ Supports multiple backends such as HTML Canvas, SVG (Scalable Vector Graphics), 
         </div>
       
         <div class='space-bottom0'>
-          <span class='code bold'>CONTEXT</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-          : the context provided by the backend.
+          <span class='code bold'>CONTEXT</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+          : the context specific to the backend.
 For HTML Canvas, this would be 
 <code>canvas.getContext('2d')</code>
 ; For p5.js, this would be
@@ -7916,7 +7916,7 @@ making the length of each segment to be about
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>hsv(h, s, v, t)</span>
+            <span class='code strong strong truncate'>hsv(h, s, v)</span>
         </div>
       </div>
       <div class="clearfix display-none toggle-target">
@@ -7926,7 +7926,7 @@ making the length of each segment to be about
 
   <p>HSV (Hue Saturation Value) to RGB color space converter.</p>
 
-    <div class='pre p1 fill-light mt0'>hsv(h: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, s: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, v: any, t: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>></div>
+    <div class='pre p1 fill-light mt0'>hsv(h: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, s: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, v: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>></div>
   
   
 
@@ -7963,15 +7963,7 @@ making the length of each segment to be about
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>v</span> <code class='quiet'>(any)</code>
-	    
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>t</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</code>
+            <span class='code bold'>v</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</code>
 	    value (brightness), 
 <code>0&#x3C;=v&#x3C;=1</code>
 
