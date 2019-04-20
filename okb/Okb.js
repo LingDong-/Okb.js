@@ -8,9 +8,9 @@
 // Procedural generation toolkit for Javascript - noises, randomness, curves, and more
 
 
-// index arrays with .x, .y, .z and negative indices
+// index arrays with .x, .y, .z
 if (("x" in []) || ("y" in []) || ("z" in [])){
-  console.log("Warning: Faied to define xyz property of Arrays, vectors might not work as expected.")
+  console.log("Warning: Failed to define xyz properties of Arrays, vectors might not work as expected.")
 }else{
   Object.defineProperty(Array.prototype, "x", {
       get: function () {return this[0]},
@@ -115,6 +115,7 @@ var Okb = new function(){var those = this;
     
     /** 
      * Rotate vector by Euler angles z x y, in that order
+     * @example
      * var v = vector.vector(1,2,3);                                  // {x:1, y:2, z:3}
      * var u = vector.rotateEuler(v, {x:Math.PI/2, y: Math.PI, z:0}); // {x:-1, y:-3, z:-2}
      * var w = vector.rotateEuler([1,2,3], [Math.PI/2, Math.PI, 0]);  // [-1, -3, -2]
@@ -131,6 +132,7 @@ var Okb = new function(){var those = this;
     }
     /** 
      * Clone a vector
+     * @example
      * var v = {x:1, y:2, z:3};
      * var u = vector.copy(v);  // {x:1, y:2, z:3}
      * var a = [1, 2]
@@ -227,7 +229,11 @@ var Okb = new function(){var those = this;
     this.normalize = function(v){
       var _v = v
       v = validate(v)
-      var p = 1/that.magnitude(v)
+      var m = that.magnitude(v);
+      if (m == 0){
+        return that.vector(v.x,v.y,v.z, _v)
+      }
+      var p = 1/m
       return that.vector(v.x*p,v.y*p,v.z*p, _v)
     }
     /**
@@ -925,9 +931,9 @@ var Okb = new function(){var those = this;
 
     /**
      * Shuffle an array in place using Fisher–Yates algorithm
-     * <br>(<a href="//https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array">Reference</a>)
+     * <br>(<a href="https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array">Reference</a>)
      * @memberof random
-     * @param {Array} the array to shuffle
+     * @param {Array} a the array to shuffle
      */
     this.shuffle = function(a) {
       var j, x, i;
@@ -1317,6 +1323,96 @@ var Okb = new function(){var those = this;
       }
       return result;
     }
+    /**
+     * Solve system of linear equations (using Gauss-Jordan elimination)
+     * @memberof math
+     * @param {(number[])[]} m a row-major matrix containing the system
+     * @returns {number[]|string} if there is a unique solution, return it (`[x0,x1,x2,...]`), otherwise return `"underdetermined"` or `"overdetermined"`
+     */
+    this.solveLinearSystem = function(m){
+      function iszero(x){
+        return Math.abs(x)<0.0001;
+      }
+      function multrow(r,s){
+        return r.map(x=>x*s)
+      }
+      function addrow(r0,r1){
+        return r0.map((x,i)=>(x+r1[i]))
+      }
+      function elimrow(ind,r0,r1){
+        var p = -r1[ind]/r0[ind]
+        var r = addrow(r1,multrow(r0,p))
+        if (r.slice(0,-1).filter(x=>(x!=0)).length == 0){
+          if (r[r.length-1] == 0){
+            return "underdetermined"
+          }else{
+            return "overdetermined"
+          }
+        }
+        return r
+      }
+      function countLeadZero(r){
+        var counter = 0;
+        for (var i = 0; i < r.length; i++){
+          if (iszero(r[i])){
+            counter += 1;
+          }else{
+            break;
+          }
+        }
+        return counter;
+      }
+      function reorder(m){
+        var M = m.slice();
+        M.sort((a,b)=>(countLeadZero(a)-countLeadZero(b)));
+        return M
+      }
+      function solve(m){
+        function isech(){
+          for (var i = 0; i < m.length; i++){
+            if (countLeadZero(m[i]) < i){
+              return false
+            }
+          }
+          return true
+        }
+        m = reorder(m)
+        while (!isech()){
+          for (var ind = 0; ind < m[0].length-2; ind ++){
+            for (var row = 1+ind; row < m.length; row++){
+              if (m[row][ind]){
+                m[row] = elimrow(ind,m[ind],m[row]);
+                if (typeof m[row] == 'string'){
+                  return m[row];
+                }
+                m = reorder(m);
+              }
+            }
+          }
+        }
+
+        for (var ind = m[0].length-2; ind > 0; ind--){
+          for (var row = 0; row < ind; row++){
+            if (!iszero(m[row][ind])){
+              m[row] = elimrow(ind,m[ind],m[row]);
+              if (typeof m[row] == 'string'){
+                return m[row];
+              }
+              m = reorder(m);
+            }
+          }
+        }
+
+        for (var row = 0; row < m.length; row++){
+          var p = 1.0/m[row][row]
+          if (p != 1){
+            m[row] = multrow(m[row],p)
+          }
+        }
+        return m.map(x=>x[x.length-1]);
+      }
+      return solve(m.slice());
+    }
   }
   /** 
    * Utilities for maths on the cartesian plane
@@ -1335,7 +1431,7 @@ var Okb = new function(){var those = this;
       return those.vector.vector(...those.vector.scale(acc,1/plist.length),plist[0]);
     }
     /**
-     * Find the bounding box of an array of points
+     * Find the bounding box of an array of (2D or 3D) points in `[min,max]` format
      * @memberof geometry
      * @param {...(Object|number[])} arguments coordinates of the points
      * @returns {(Object|number[])[]} `[upperLeftCorner, lowerRightCorner]` 
@@ -1345,18 +1441,37 @@ var Okb = new function(){var those = this;
       var xmax = -Infinity
       var ymin = Infinity
       var ymax = -Infinity
+      var zmin = Infinity
+      var zmax = -Infinity
       for (var i = 0; i < P.length; i++){
         if (P[i].x < xmin){xmin = P[i].x}
         if (P[i].x > xmax){xmax = P[i].x}
         if (P[i].y < ymin){ymin = P[i].y}
         if (P[i].y > ymax){ymax = P[i].y}
+        if (P[i].z < zmin){zmin = P[i].z}
+        if (P[i].z > zmax){zmax = P[i].z}
       }
-      return [those.vector.vector(xmin,ymin,0,P[0]),
-              those.vector.vector(xmax,ymax,0,P[0])]
+      return [those.vector.vector(xmin,ymin,zmin,P[0]),
+              those.vector.vector(xmax,ymax,zmax,P[0])]
+    }
+    /**
+     * Find the bounding rectangle of 2D points in `{x,y,width,height}` format
+     * @memberof geometry
+     * @param {...(Object|number[])} arguments coordinates of the points
+     * @returns {Object} an object containing `x`, `y`, `width`, `height` fields
+     */                          
+    this.rectangleBound = function(P){
+      var bd = that.bound(P);
+      return {
+        x:bd[0].x,
+        y:bd[0].y,
+        width: bd[1].x-bd[0].x,
+        height:bd[1].y-bd[0].y,
+      }
     }
 
     /**
-     * Find standard equation (`ax+by+c=0`) of the line passing through 2 points 
+     * Find standard equation (`ax+by+c=0`) of the (2D) line passing through 2 points 
      * @memberof geometry
      * @param {Object|number[]} pt0 first point
      * @param {Object|number[]} pt1 second point
@@ -1450,34 +1565,69 @@ var Okb = new function(){var those = this;
     }
 
     /**
-     * Find the intersection of two line segments
+     * Find the intersection of two (2D) segments/lines/rays
      * @memberof geometry
      * @param {(Object|number[])[]} ln0 first line specified by an array containing 2 points
      * @param {(Object|number[])[]} ln1 second line specified by an array containing 2 points
-     * @param {boolean} inclusive whether end points should be included
-     * @returns {boolean|Object|number[]} point of intersection, or `false` if there isn't one.
+     * @param {string[]} [mode=["segment","segment"]] a 2-element array containing the type of the two lines, each of which can be `"segment"` or `"ray"` or `"line"`
+     * @returns {boolean|Object|number[]} point of intersection, or `true` if there are infinitely many, or `false` if there isn't one.
      */
-    this.intersect = function(ln0,ln1,inclusive){
-      if (inclusive == undefined){inclusive = true;}
-      var le0 = that.slopeIntercept(...ln0)
-      var le1 = that.slopeIntercept(...ln1)
-      var den = (le0[0]-le1[0])
-      if (den == 0){return false}
-      var x = (le1[1]-le0[1])/den
-      var y = le0[0]*x+le0[1]
-      function onSeg(p,ln){
-        if (inclusive){
-          return Math.min(ln[0].x,ln[1].x) <= p.x&&p.x <= Math.max(ln[0].x,ln[1].x)
-              && Math.min(ln[0].y,ln[1].y) <= p.y&&p.y <= Math.max(ln[0].y,ln[1].y)
-        }else{
-          var ep = 0.01;
-          return Math.min(ln[0].x,ln[1].x)+ep < p.x&&p.x < Math.max(ln[0].x,ln[1].x)-ep
-              && Math.min(ln[0].y,ln[1].y)+ep < p.y&&p.y < Math.max(ln[0].y,ln[1].y)-ep
+                                 
+    this.intersect = function(ln0,ln1,mode){
+      if (mode == undefined){mode = ["segment","segment"]};
+      
+      function useQuick(){
+        var le0 = that.slopeIntercept(...ln0)
+        var le1 = that.slopeIntercept(...ln1)
+        var den = (le0[0]-le1[0])
+        if (den == 0){return false}
+        var x = (le1[1]-le0[1])/den;
+        var y = le0[0]*x+le0[1];
+        if (isFinite(x) && isFinite(y) && (!isNaN(x)) && (!isNaN(y))){
+          return [x,y]
+        }
+        return false;
+      }
+      function useRobust(){
+        var le0 = that.lineEquation(...ln0);
+        var le1 = that.lineEquation(...ln1);
+        return those.math.solveLinearSystem([
+          [le0[0], le0[1], -le0[2]],
+          [le1[0], le1[1], -le1[2]],
+        ]);
+      }
+      var sol = useQuick() || useRobust();
+      if (sol == "overdetermined"){
+        return false;
+      }
+      function makebox(ln,mo){
+        if (mo == "segment"){
+          return that.bound(ln);
+        }else if (mo == "ray"){
+          return that.bound([ln[0], Okb.vector.scale(Okb.vector.subtract(ln[1],ln[0]),Infinity)]);
+        }else if (mo == "line"){
+          return [[-Infinity,-Infinity],[Infinity,Infinity]];
         }
       }
-      if (onSeg([x,y],ln0) && onSeg([x,y],ln1)){return those.vector.vector(x,y,0,ln0[0])}
-      return false
-    }
+      function inbox(p,box){
+        return box[0].x <= p.x&&p.x <= box[1].x
+            && box[0].y <= p.y&&p.y <= box[1].y
+      }
+      var box0 = makebox(ln0,mode[0]);
+      var box1 = makebox(ln1,mode[1]);
+      if (sol == "underdetermined"){
+        return that.rectangleOverlap(
+          that.rectangleBound(box0),
+          that.rectangleBound(box1),
+        )
+      }else{
+        if (inbox(sol,box0) && inbox(sol,box1)){
+          return sol
+        }
+        return false
+      }
+    }                         
+                                 
     /**
      * Check if a point is inside a polygon (even-odd algorithm)
      * @memberof geometry
@@ -1490,9 +1640,7 @@ var Okb = new function(){var those = this;
       for (var i = 0; i < plist.length; i++){
         var np = plist[i!=plist.length-1?i+1:0]
         var sect = that.intersect([plist[i],np],
-          [p,[Number.MAX_VALUE,Number.MAX_VALUE/3*Math.E]]) //<-nasty hack for speed
-                                                            //hopefully there's no side whose
-                                                            //gradient is exactly E/3
+          [p,[p.x+1,p.y+Math.PI]],["segment","ray"])
         if (sect != false){scount++;}
       }
       return scount % 2 == 1;
@@ -1524,7 +1672,7 @@ var Okb = new function(){var those = this;
       var a = slist[0], b = slist[1], c = slist[2]
       var s = (a+b+c)/2
       return Math.sqrt(s*(s-a)*(s-b)*(s-c))
-    }
+    }                          
     /**
      * Divide polygon into multiple triangles (by ear-cutting)
      * @memberof geometry
@@ -1639,7 +1787,7 @@ var Okb = new function(){var those = this;
      * @param {number} b.height height
      * @returns {boolean} `true` if the rectangles overlap, `false` if not.
      */
-    this.rectIntersect = function(a,b){
+    this.rectangleOverlap = function(a,b){
       return (
         a.x <= b.x + b.width &&
         a.x + a.width >= b.x &&
@@ -1647,6 +1795,32 @@ var Okb = new function(){var those = this;
         a.y + a.height >= b.y
       )
     }
+    /**
+     * Check if there's any overlap between two polygons
+     * @memberof geometry
+     * @param {(Object|number[])[]} plist0 an array containing vertices of the first polygon
+     * @param {(Object|number[])[]} plist1 an array containing vertices of the second polygon
+     * @returns {boolean} `true` if the polygons overlap, `false` if not.
+     */                            
+    this.polygonOverlap = function(plist0, plist1){
+      for (var i = 0; i < plist0.length; i++){
+        var l0 = [plist0[i],plist0[(i+1)%plist0.length]]
+        for (var j = 0; j < plist1.length; j++){
+          var l1 = [plist1[j],plist1[(j+1)%plist1.length]]
+          if (that.intersect(l0,l1)){
+            return true;
+          }
+        }
+      }
+      if (that.pointInPolygon(plist0[0],plist1)){
+        return true;
+      }
+      if (that.pointInPolygon(plist1[0],plist0)){
+        return true;
+      }
+      return false;
+    }
+                                 
     /**
      * Generate variable-width "tube" shape from a polyline, similar to outlining a stroke.
      * @memberof geometry

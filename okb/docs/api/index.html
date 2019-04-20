@@ -340,6 +340,12 @@
                       </a></li>
                     
                       <li><a
+                        href='#curvesgaussian2d'
+                        class='regular pre-open'>
+                        .gaussian2d
+                      </a></li>
+                    
+                      <li><a
                         href='#curvessigmoid'
                         class='regular pre-open'>
                         .sigmoid
@@ -433,6 +439,12 @@
                         .matrixMultiply
                       </a></li>
                     
+                      <li><a
+                        href='#mathsolvelinearsystem'
+                        class='regular pre-open'>
+                        .solveLinearSystem
+                      </a></li>
+                    
                     </ul>
                   
                   
@@ -465,6 +477,12 @@
                         href='#geometrybound'
                         class='regular pre-open'>
                         .bound
+                      </a></li>
+                    
+                      <li><a
+                        href='#geometryrectanglebound'
+                        class='regular pre-open'>
+                        .rectangleBound
                       </a></li>
                     
                       <li><a
@@ -522,9 +540,15 @@
                       </a></li>
                     
                       <li><a
-                        href='#geometryrectintersect'
+                        href='#geometryrectangleoverlap'
                         class='regular pre-open'>
-                        .rectIntersect
+                        .rectangleOverlap
+                      </a></li>
+                    
+                      <li><a
+                        href='#geometrypolygonoverlap'
+                        class='regular pre-open'>
+                        .polygonOverlap
                       </a></li>
                     
                       <li><a
@@ -992,10 +1016,7 @@ e.g.: <code>{x:1, y:2}</code>, <code>{x:1, y:2, z:3}</code>, <code>[1, 2, 3]</co
 
   
 
-  <p>Rotate vector by Euler angles z x y, in that order
-var v = vector.vector(1,2,3);                                  // {x:1, y:2, z:3}
-var u = vector.rotateEuler(v, {x:Math.PI/2, y: Math.PI, z:0}); // {x:-1, y:-3, z:-2}
-var w = vector.rotateEuler([1,2,3], [Math.PI/2, Math.PI, 0]);  // [-1, -3, -2]</p>
+  <p>Rotate vector by Euler angles z x y, in that order</p>
 
     <div class='pre p1 fill-light mt0'>rotateEuler(vec: (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>>), rot: (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>>)): (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>>)</div>
   
@@ -1048,6 +1069,14 @@ var w = vector.rotateEuler([1,2,3], [Math.PI/2, Math.PI, 0]);  // [-1, -3, -2]</
   
 
   
+    <div class='py1 quiet mt1 prose-big'>Example</div>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-keyword">var</span> v = vector.vector(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>);                                  <span class="hljs-comment">// {x:1, y:2, z:3}</span>
+<span class="hljs-keyword">var</span> u = vector.rotateEuler(v, {<span class="hljs-attr">x</span>:<span class="hljs-built_in">Math</span>.PI/<span class="hljs-number">2</span>, <span class="hljs-attr">y</span>: <span class="hljs-built_in">Math</span>.PI, <span class="hljs-attr">z</span>:<span class="hljs-number">0</span>}); <span class="hljs-comment">// {x:-1, y:-3, z:-2}</span>
+<span class="hljs-keyword">var</span> w = vector.rotateEuler([<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>], [<span class="hljs-built_in">Math</span>.PI/<span class="hljs-number">2</span>, <span class="hljs-built_in">Math</span>.PI, <span class="hljs-number">0</span>]);  <span class="hljs-comment">// [-1, -3, -2]</span></pre>
+    
+  
 
   
 
@@ -1071,13 +1100,7 @@ var w = vector.rotateEuler([1,2,3], [Math.PI/2, Math.PI, 0]);  // [-1, -3, -2]</
 
   
 
-  <p>Clone a vector
-var v = {x:1, y:2, z:3};
-var u = vector.copy(v);  // {x:1, y:2, z:3}
-var a = [1, 2]
-var b = vector.copy(a);  // [1, 2]
-v.x = 10;
-console.log(u.x);        // 1</p>
+  <p>Clone a vector</p>
 
     <div class='pre p1 fill-light mt0'>copy(vec: (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>>)): (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>>)</div>
   
@@ -1120,6 +1143,17 @@ console.log(u.x);        // 1</p>
 
   
 
+  
+    <div class='py1 quiet mt1 prose-big'>Example</div>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-keyword">var</span> v = {<span class="hljs-attr">x</span>:<span class="hljs-number">1</span>, <span class="hljs-attr">y</span>:<span class="hljs-number">2</span>, <span class="hljs-attr">z</span>:<span class="hljs-number">3</span>};
+<span class="hljs-keyword">var</span> u = vector.copy(v);  <span class="hljs-comment">// {x:1, y:2, z:3}</span>
+<span class="hljs-keyword">var</span> a = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>]
+<span class="hljs-keyword">var</span> b = vector.copy(a);  <span class="hljs-comment">// [1, 2]</span>
+v.x = <span class="hljs-number">10</span>;
+<span class="hljs-built_in">console</span>.log(u.x);        <span class="hljs-comment">// 1</span></pre>
+    
   
 
   
@@ -3619,7 +3653,7 @@ probability of returning a point is proportional to the output of input function
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>shuffle(a, the)</span>
+            <span class='code strong strong truncate'>shuffle(a)</span>
         </div>
       </div>
       <div class="clearfix display-none toggle-target">
@@ -3628,9 +3662,9 @@ probability of returning a point is proportional to the output of input function
   
 
   <p>Shuffle an array in place using Fisher–Yates algorithm
-<br>(<a href="//https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array">Reference</a>)</p>
+<br>(<a href="https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array">Reference</a>)</p>
 
-    <div class='pre p1 fill-light mt0'>shuffle(a: any, the: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</div>
+    <div class='pre p1 fill-light mt0'>shuffle(a: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</div>
   
   
 
@@ -3647,16 +3681,8 @@ probability of returning a point is proportional to the output of input function
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>a</span> <code class='quiet'>(any)</code>
-	    
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>the</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
-	    array to shuffle
+            <span class='code bold'>a</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
+	    the array to shuffle
 
           </div>
           
@@ -4160,6 +4186,84 @@ A non-uniform one can be used to create patterns
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>:
         <code>y</code>
+ 
+<code>0&#x3C;=y&#x3C;=1</code>
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='curvesgaussian2d'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>gaussian2d(x, y)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>2D Gaussian</p>
+
+    <div class='pre p1 fill-light mt0'>gaussian2d(x: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>, y: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>x</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</code>
+	    <code>0&#x3C;=x&#x3C;=1</code>
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>y</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>)</code>
+	    <code>0&#x3C;=y&#x3C;=1</code>
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>:
+        <code>z</code>
  
 <code>0&#x3C;=y&#x3C;=1</code>
 
@@ -5358,6 +5462,78 @@ interpolate (<span class="hljs-function">(<span class="hljs-params">x</span>)=&g
       </div>
     </div>
   
+    <div class='border-bottom' id='mathsolvelinearsystem'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>solveLinearSystem(m)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Solve system of linear equations (using Gauss-Jordan elimination)</p>
+
+    <div class='pre p1 fill-light mt0'>solveLinearSystem(m: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>>)>): (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>m</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>>)>)</code>
+	    a row-major matrix containing the system
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>:
+        if there is a unique solution, return it (
+<code>[x0,x1,x2,...]</code>
+), otherwise return 
+<code>"underdetermined"</code>
+ or 
+<code>"overdetermined"</code>
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
 </div>
 
   
@@ -5489,7 +5665,7 @@ interpolate (<span class="hljs-function">(<span class="hljs-params">x</span>)=&g
 
   
 
-  <p>Find the bounding box of an array of points</p>
+  <p>Find the bounding box of an array of (2D or 3D) points in <code>[min,max]</code> format</p>
 
     <div class='pre p1 fill-light mt0'>bound(P: any, arguments: ...(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>>)): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>>)></div>
   
@@ -5552,6 +5728,89 @@ interpolate (<span class="hljs-function">(<span class="hljs-params">x</span>)=&g
       </div>
     </div>
   
+    <div class='border-bottom' id='geometryrectanglebound'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>rectangleBound(P, arguments)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Find the bounding rectangle of 2D points in <code>{x,y,width,height}</code> format</p>
+
+    <div class='pre p1 fill-light mt0'>rectangleBound(P: any, arguments: ...(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>>)): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>P</span> <code class='quiet'>(any)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>arguments</span> <code class='quiet'>(...(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>>))</code>
+	    coordinates of the points
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></code>:
+        an object containing 
+<code>x</code>
+, 
+<code>y</code>
+, 
+<code>width</code>
+, 
+<code>height</code>
+ fields
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
     <div class='border-bottom' id='geometrylineequation'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
@@ -5564,7 +5823,7 @@ interpolate (<span class="hljs-function">(<span class="hljs-params">x</span>)=&g
 
   
 
-  <p>Find standard equation (<code>ax+by+c=0</code>) of the line passing through 2 points</p>
+  <p>Find standard equation (<code>ax+by+c=0</code>) of the (2D) line passing through 2 points</p>
 
     <div class='pre p1 fill-light mt0'>lineEquation(pt0: (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>>), pt1: (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>>)): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>></div>
   
@@ -5878,7 +6137,7 @@ interpolate (<span class="hljs-function">(<span class="hljs-params">x</span>)=&g
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>intersect(ln0, ln1, inclusive)</span>
+            <span class='code strong strong truncate'>intersect(ln0, ln1, mode)</span>
         </div>
       </div>
       <div class="clearfix display-none toggle-target">
@@ -5886,9 +6145,9 @@ interpolate (<span class="hljs-function">(<span class="hljs-params">x</span>)=&g
 
   
 
-  <p>Find the intersection of two line segments</p>
+  <p>Find the intersection of two (2D) segments/lines/rays</p>
 
-    <div class='pre p1 fill-light mt0'>intersect(ln0: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>>)>, ln1: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>>)>, inclusive: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>): (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>>)</div>
+    <div class='pre p1 fill-light mt0'>intersect(ln0: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>>)>, ln1: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>>)>, mode: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>>): (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>>)</div>
   
   
 
@@ -5923,8 +6182,14 @@ interpolate (<span class="hljs-function">(<span class="hljs-params">x</span>)=&g
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>inclusive</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>)</code>
-	    whether end points should be included
+            <span class='code bold'>mode</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>>
+            = <code>[&quot;segment&quot;,&quot;segment&quot;]</code>)</code>
+	    a 2-element array containing the type of the two lines, each of which can be 
+<code>"segment"</code>
+ or 
+<code>"ray"</code>
+ or 
+<code>"line"</code>
 
           </div>
           
@@ -5940,6 +6205,8 @@ interpolate (<span class="hljs-function">(<span class="hljs-params">x</span>)=&g
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>>)</code>:
         point of intersection, or 
+<code>true</code>
+ if there are infinitely many, or 
 <code>false</code>
  if there isn't one.
 
@@ -6308,11 +6575,11 @@ to keep the usually undesirable, "sliver" triangles to a minimum. (slower)
       </div>
     </div>
   
-    <div class='border-bottom' id='geometryrectintersect'>
+    <div class='border-bottom' id='geometryrectangleoverlap'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>rectIntersect(a, b)</span>
+            <span class='code strong strong truncate'>rectangleOverlap(a, b)</span>
         </div>
       </div>
       <div class="clearfix display-none toggle-target">
@@ -6322,7 +6589,7 @@ to keep the usually undesirable, "sliver" triangles to a minimum. (slower)
 
   <p>Check if there's any overlap between two rectangles (edge-inclusive)</p>
 
-    <div class='pre p1 fill-light mt0'>rectIntersect(a: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>, b: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></div>
+    <div class='pre p1 fill-light mt0'>rectangleOverlap(a: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>, b: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></div>
   
   
 
@@ -6470,6 +6737,85 @@ to keep the usually undesirable, "sliver" triangles to a minimum. (slower)
       <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></code>:
         <code>true</code>
  if the rectangles overlap, 
+<code>false</code>
+ if not.
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='geometrypolygonoverlap'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>polygonOverlap(plist0, plist1)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Check if there's any overlap between two polygons</p>
+
+    <div class='pre p1 fill-light mt0'>polygonOverlap(plist0: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>>)>, plist1: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>>)>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>plist0</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>>)>)</code>
+	    an array containing vertices of the first polygon
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>plist1</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>>)>)</code>
+	    an array containing vertices of the second polygon
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></code>:
+        <code>true</code>
+ if the polygons overlap, 
 <code>false</code>
  if not.
 
