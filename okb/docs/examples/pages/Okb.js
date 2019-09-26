@@ -168,11 +168,15 @@ var Okb = new function(){var those = this;
         if (typeof(arguments[i]) == 'number'){
           v.x += arguments[i] || 0;
           v.y += arguments[i] || 0;
-          v.z += arguments[i] || 0;
+          if (v.z != undefined){
+            v.z += arguments[i] || 0;
+          }
         }else{
           v.x += arguments[i].x || 0;
           v.y += arguments[i].y || 0;
-          v.z += arguments[i].z || 0;
+          if (v.z != undefined){
+            v.z += arguments[i].z || 0;
+          }
         }
       }
       return v
@@ -219,6 +223,16 @@ var Okb = new function(){var those = this;
     this.magnitude = function(v){
       v = validate(v)
       return Math.sqrt(v.x*v.x + v.y*v.y + v.z*v.z)
+    }
+    /**
+     * Squared norm of a vector
+     * @memberof vector
+     * @param {Object|number[]} v a vector
+     * @returns {number} ||v||^2
+     */
+    this.norm2 = function(v){
+      v = validate(v)
+      return v.x*v.x + v.y*v.y + v.z*v.z;
     }
     /**
      * Normalize (turn into unit) vector
@@ -1302,6 +1316,25 @@ var Okb = new function(){var those = this;
     this.lerp = that.interpolate((x)=>(x))
     
     /**
+     * Normalize angle to interval `]–π,π]`
+     * @memberof math
+     * @param {number} x any number
+     * @returns {number} `y` where `-π < y <= π`
+     */                         
+    this.normalizePlusMinusPi = function(x){
+      if (-Math.PI < x && x <= Math.PI){
+        return x;
+      }
+      while (x <= -Math.PI){
+        x += Math.PI*2
+      }
+      while (x > Math.PI){
+        x -= Math.PI*2
+      }
+      return x;
+    }                         
+    
+    /**
      * Matrix multiplication
      * <br>(<a href="https://stackoverflow.com/questions/27205018/multiply-2-matrices-in-javascript">Reference</a>)
      * @memberof math
@@ -1413,6 +1446,71 @@ var Okb = new function(){var those = this;
       }
       return solve(m.slice());
     }
+    /**
+     * k-means clustering
+     * @memberof math
+     * @param {(Object|number[])[]} P an array of point coordinates
+     * @param {number} k number of clusters
+     * @param {number} [maxIter=100] maximum number of iterations
+     * @returns {Object} `result` where: 
+     *   `result.center` stores the coordinate of cluster centers; 
+     *   `result.labels` stores an array of integers (`0`-`k`) corresponding to cluster index of each point in input array;
+     *   `result.summary` stores a summary of this run.
+     */
+     this.kmeans = function(P,k,maxIter){
+       
+      if (maxIter == undefined){maxIter = 100;}
+        var indices = P.map((x,i)=>i);
+        those.random.shuffle(indices);
+        var clusters = []
+        for (var i = 0; i < k; i++){
+          clusters.push({center:P[indices[i]],data:[]})
+        }
+        var cnt = 0;
+        var last = clusters.map(x=>-1);
+        var converged;
+        function iter(){
+          for (var i = 0; i < k; i++){
+            clusters[i].data = [];
+          }
+          for (var i = 0; i < indices.length; i++){
+            var idx = indices[i]
+            var p = P[idx];
+            var mind = Infinity;
+            var minj = undefined;
+            for (var j = 0; j < k; j++){
+              var c = clusters[j].center;
+              var d = those.vector.distance(c,p);
+              if (d < mind){
+                mind = d;
+                minj = j;
+              }
+            }
+            clusters[minj].data.push(idx);
+          }
+          converged = true;
+          for (var i = 0; i < k; i++){
+            clusters[i].center = those.geometry.midpoint(clusters[i].data.map(x=>P[x]));
+            if (those.vector.distance(last[i],clusters[i].center)>Number.EPSILON){
+              converged = false;
+            }
+          }
+          if (cnt >= maxIter || converged){
+            return false;
+          }
+          last = clusters.map(x=>x.center);
+          cnt ++;
+          return true;
+        }
+        while(iter()){};
+        var labels = [];
+        for (var i = 0; i < clusters.length; i++){
+          for (var j = 0; j < clusters[i].data.length; j++){
+            labels[clusters[i].data[j]] = i;
+          }
+        }
+        return {centers:clusters.map(x=>x.center), labels:labels, summary:{converged:converged,iterations:cnt}}
+     }
   }
   /** 
    * Utilities for maths on the cartesian plane
@@ -1433,7 +1531,7 @@ var Okb = new function(){var those = this;
     /**
      * Find the bounding box of an array of (2D or 3D) points in `[min,max]` format
      * @memberof geometry
-     * @param {...(Object|number[])} arguments coordinates of the points
+     * @param {...(Object|number[])} P coordinates of the points
      * @returns {(Object|number[])[]} `[upperLeftCorner, lowerRightCorner]` 
      */
     this.bound = function(P){
@@ -1457,7 +1555,7 @@ var Okb = new function(){var those = this;
     /**
      * Find the bounding rectangle of 2D points in `{x,y,width,height}` format
      * @memberof geometry
-     * @param {...(Object|number[])} arguments coordinates of the points
+     * @param {...(Object|number[])} P coordinates of the points
      * @returns {Object} an object containing `x`, `y`, `width`, `height` fields
      */                          
     this.rectangleBound = function(P){
@@ -1565,7 +1663,7 @@ var Okb = new function(){var those = this;
     }
 
     /**
-     * Find the intersection of two (2D) segments/lines/rays
+     * Find the intersection of two 2D segments/lines/rays (use intersect3d for 3D lines)
      * @memberof geometry
      * @param {(Object|number[])[]} ln0 first line specified by an array containing 2 points
      * @param {(Object|number[])[]} ln1 second line specified by an array containing 2 points
@@ -1626,7 +1724,51 @@ var Okb = new function(){var those = this;
         }
         return false
       }
-    }                         
+    }
+    
+    /**
+     * Find the intersection (or the closest point when they're skew) of two 3D lines
+     * @memberof geometry
+     * @param {(Object|number[])[]} ln0 first line specified by an array containing 2 points
+     * @param {(Object|number[])[]} ln1 second line specified by an array containing 2 points
+     * @returns {Object} `{point, parallel, error, parameters}` where 
+     * `point` is the intersection point (approximated if lines are skew),
+     * `parallel` is a `bool` indicating whether the two lines are parallel (including coincident),
+     * `error` is the minimum distance between the two lines (`0` if the lines intersect),
+     * `parameters` is a 2-element `Array` containing the interpolation parameter for each of the lines
+     *  between end points (which can be used determine segment/ray intersection).
+     */                  
+    this.intersect3d = function(ln0,ln1){
+      var x = {
+        point:those.vector.vector(0,0,0),
+        parallel:false,
+        error:0,
+        parameters:[0,0],
+      }
+      function det(r1, r2, r3){
+        var a = r1.x; var b = r1.y; var c = r1.z;
+        var d = r2.x; var e = r2.y; var f = r2.z;
+        var g = r3.x; var h = r3.y; var i = r3.z;
+        return a*e*i + b*f*g + c*d*h - c*e*g - b*d*i - a*f*h;
+      }
+      var r1 = {o:ln0[0],d:those.vector.subtract(ln0[1],ln0[0])};
+      var r2 = {o:ln1[0],d:those.vector.subtract(ln1[1],ln1[0])};
+      var vc = those.vector.cross(r1.d,r2.d);
+      var vcn = those.vector.norm2(vc);
+      if (vcn == 0){
+        x.parallel = true;
+        return x;
+      }
+      var t = det(r2.o-r1.o, r2.d, vc)/vcn;
+      var s = det(r2.o-r1.o, r1.d, vc)/vcn;
+      var x1 = (r1.o + r1.d * t);
+      var x2 = (r2.o + r2.d * s);
+      x.point = ( x1 + x2 )/2;
+      x.error = Math.sqrt(those.vector.norm2(x1-x2));
+      x.parameter[0] = t;
+      x.parameter[1] = s;
+      return x;
+    }
                                  
     /**
      * Check if a point is inside a polygon (even-odd algorithm)
@@ -1662,12 +1804,12 @@ var Okb = new function(){var those = this;
       return slist
     }
     /**
-     * Get area of a polygon
+     * Get area of a triangle
      * @memberof geometry
-     * @param {(Object|number[])[]} plist an array containing vertices of the polygon
-     * @returns {number[]} array containing length of each side
+     * @param {(Object|number[])[]} plist an array containing 3 vertices of the triangle
+     * @returns {number} the area of the triangle
      */
-    this.polygonArea = function(plist){
+    this.triangleArea = function(plist){
       var slist = that.polygonSides(plist)
       var a = slist[0], b = slist[1], c = slist[2]
       var s = (a+b+c)/2
@@ -1713,7 +1855,7 @@ var Okb = new function(){var those = this;
       }
 
       function sliverRatio(plist){
-        var A = that.polygonArea(plist)
+        var A = that.triangleArea(plist)
         var P = that.polygonSides(plist).reduce(function(m,n){return m+n},0)
         return A/P
       }
@@ -1746,7 +1888,7 @@ var Okb = new function(){var those = this;
         if (plist.length == 0){
           return []
         }
-        if (that.polygonArea(plist) < a){
+        if (that.triangleArea(plist) < a){
           return [plist]
         }else{
           var slist = that.polygonSides(plist);
@@ -1968,8 +2110,6 @@ var Okb = new function(){var those = this;
       return stack;
     }
   }
-
-
   /** 
    * Utilities for drawing procedurally generated visuals. 
    * Supports multiple backends such as HTML Canvas, SVG (Scalable Vector Graphics), and p5.js.
