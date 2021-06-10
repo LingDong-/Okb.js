@@ -3,9 +3,10 @@
 // | |  | | | _| |__  
 // | |  | | |/ / '_ \ 
 // | |__| |   <| |_) |
-//  \____/|_|\_\_.__/ 
+//  \____/|_|\_\_.__/ .JS
 //                    
 // Procedural generation toolkit for Javascript - noises, randomness, curves, and more
+// by Lingdong Huang
 
 
 // index arrays with .x, .y, .z
@@ -874,6 +875,7 @@ var Okb = new function(){var those = this;
       this.plasmaSeed(seed);
       this.simplexSeed(seed);
       this.valueNoiseSeed(seed);
+      this.blueSeed(seed);
     }
     /**
      * Overwrite JavaScript defualt `Math.random()` with `random()`,
@@ -1023,6 +1025,17 @@ var Okb = new function(){var those = this;
         return that.simplex(rx+nx+z, rx+ny+z, ry+mx+z, ry+my+z);
       }
     }
+    
+    var blue_lcg = undefined;
+    /**
+     * Set seed for `blue()`
+     * @memberof random
+     * @param {number} seed
+     */
+    this.blueSeed = function(seed){
+      blue_lcg = Lcg();
+      blue_lcg.setSeed(seed);
+    }
     /**
      * Blue (Poisson-disk) noise
      * @example
@@ -1042,16 +1055,20 @@ var Okb = new function(){var those = this;
      * @returns {function} `f` where `f()` evaluates to the next sample
      */
     this.blue = function(args){
+      if (blue_lcg == undefined){
+        that.blueSeed((new Date()).getTime());
+      }
+      
       args = (args != undefined) ? args : {}
       var dimension = (args.dimension != undefined) ? args.dimension : 2;
       var iteration = (args.iteration != undefined) ? args.iteration : 20;
       var sampler = (args.sampler != undefined) ? args.sampler : function(){
         if (dimension == 1){
-          return {x:Math.random(), y:0, z:0}
+          return {x:blue_lcg.rand(), y:0, z:0}
         }else if (dimension == 2){
-          return {x:Math.random(), y:Math.random(), z:0}
+          return {x:blue_lcg.rand(), y:blue_lcg.rand(), z:0}
         }else if (dimension == 3){
-          return {x:Math.random(), y:Math.random(), z:Math.random()}
+          return {x:blue_lcg.rand(), y:blue_lcg.rand(), z:blue_lcg.rand()}
         }
       }
       var dots = []
@@ -1526,7 +1543,7 @@ var Okb = new function(){var those = this;
       var plist = (arguments.length == 1) ? 
         arguments[0] : Array.apply(null, arguments)
       var acc = those.vector.add.apply(null, plist)
-      return those.vector.vector(...those.vector.scale(acc,1/plist.length),plist[0]);
+      return those.vector.scale(acc,1/plist.length);
     }
     /**
      * Find the bounding box of an array of (2D or 3D) points in `[min,max]` format
@@ -1755,18 +1772,21 @@ var Okb = new function(){var those = this;
       var r2 = {o:ln1[0],d:those.vector.subtract(ln1[1],ln1[0])};
       var vc = those.vector.cross(r1.d,r2.d);
       var vcn = those.vector.norm2(vc);
+
       if (vcn == 0){
         x.parallel = true;
         return x;
       }
-      var t = det(r2.o-r1.o, r2.d, vc)/vcn;
-      var s = det(r2.o-r1.o, r1.d, vc)/vcn;
-      var x1 = (r1.o + r1.d * t);
-      var x2 = (r2.o + r2.d * s);
-      x.point = ( x1 + x2 )/2;
-      x.error = Math.sqrt(those.vector.norm2(x1-x2));
-      x.parameter[0] = t;
-      x.parameter[1] = s;
+      var t = det(those.vector.subtract(r2.o,r1.o), r2.d, vc)/vcn;
+      var s = det(those.vector.subtract(r2.o,r1.o), r1.d, vc)/vcn;
+
+      var x1 = those.vector.add(r1.o , those.vector.scale(r1.d , t));
+      var x2 = those.vector.add(r2.o , those.vector.scale(r2.d , s));
+      x.point = those.vector.scale(those.vector.add( x1 , x2 ),0.5);
+
+      x.error = Math.sqrt(those.vector.norm2(those.vector.subtract(x1,x2)));
+      x.parameters[0] = t;
+      x.parameters[1] = s;
       return x;
     }
                                  
