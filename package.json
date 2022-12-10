@@ -10,7 +10,7 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "documentation": "^9.2.1",
     "minify": "^4.1.1"
   },
